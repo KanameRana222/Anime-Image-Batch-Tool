@@ -1,0 +1,9 @@
+{
+  "exe": "RealESRGAN/realesrgan-ncnn-vulkan.exe",
+  "model_dir": "RealESRGAN/models",
+  "model": "realesrgan-x4plus-anime",
+  "tile": 0,
+  "gpu": "auto",
+  "port": 8765,
+  "engine_timeout": 1800
+}

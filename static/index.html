@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="本地运行的图片批处理工具：AI 超分放大、尺寸缩放、锐化、格式转换。">
+<title>图片批处理工具箱 - 本地一键处理</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="logo"><span class="mark">图</span>图片批处理工具箱</div>
+    <div class="engine-badge" id="engineBadge"><span class="dot" id="engineDot"></span><span id="engineText">检测引擎中…</span></div>
+  </div>
+</header>
+
+<main class="main">
+  <div class="hero">
+    <h1>让图片批处理<em>更简单</em></h1>
+    <p>AI 超分放大 · 尺寸缩放 · 锐化 · WebP/JPG/PNG 批量转换 —— 全程本地处理，图片不出电脑</p>
+  </div>
+
+  <div class="steps">
+    <div class="step active" id="step1"><b>1</b>选择图片</div>
+    <div class="step" id="step2"><b>2</b>设置参数</div>
+    <div class="step" id="step3"><b>3</b>开始处理</div>
+  </div>
+
+  <!-- ① 选择图片 -->
+  <section class="card">
+    <div class="card-title"><span class="n">1</span>选择图片</div>
+    <div class="src-switch">
+      <button id="srcBrowser" class="on">浏览选择</button>
+      <button id="srcPath">本地路径（大文件夹更快）</button>
+    </div>
+
+    <div id="browserPane">
+      <div class="dropzone" id="dropzone">
+        <div class="icon">🖼️</div>
+        <div class="t1">拖拽图片到此处，或点击下方按钮选择</div>
+        <div class="t2">支持 jpg / jpeg / png / webp / bmp / tif / tiff / gif（取第一帧）</div>
+        <div class="btns">
+          <button class="btn btn-primary" id="btnPickFiles">选择图片</button>
+          <button class="btn btn-ghost" id="btnPickFolder">选择文件夹</button>
+        </div>
+      </div>
+      <input type="file" id="fileInput" multiple accept=".jpg,.jpeg,.png,.webp,.bmp,.tif,.tiff,.gif" class="hidden">
+      <input type="file" id="folderInput" webkitdirectory class="hidden">
+      <div id="uploadSummary"></div>
+    </div>
+
+    <div id="pathPane" class="hidden">
+      <div class="path-row">
+        <input type="text" id="localPath" placeholder="例如：你的图片文件夹路径，或某一张图片的完整路径" spellcheck="false">
+        <button class="btn btn-primary" id="btnScan">扫描</button>
+      </div>
+      <div class="hint">直接读取本机磁盘上的文件，无需上传，适合处理整个大文件夹。</div>
+      <div id="scanSummary"></div>
+    </div>
+  </section>
+
+  <!-- ② 设置参数 -->
+  <section class="card">
+    <div class="card-title"><span class="n">2</span>设置参数</div>
+
+    <div style="font-size:13px;color:var(--slate-600);font-weight:600;margin-bottom:10px;">尺寸处理</div>
+    <div class="opt-grid" id="scaleModes">
+      <div class="opt-card on" data-mode="none"><div class="t">不调整</div><div class="d">保持原始尺寸</div></div>
+      <div class="opt-card" data-mode="x2"><span class="badge">AI</span><div class="t">放大 2 倍</div><div class="d">x4plus-anime 模型</div></div>
+      <div class="opt-card" data-mode="x3"><span class="badge">AI</span><div class="t">放大 3 倍</div><div class="d">x4plus-anime 模型</div></div>
+      <div class="opt-card" data-mode="x4"><span class="badge">AI</span><div class="t">放大 4 倍</div><div class="d">x4plus-anime 模型</div></div>
+      <div class="opt-card" data-mode="width"><div class="t">指定宽度</div><div class="d">另一边按比例自适应</div></div>
+      <div class="opt-card" data-mode="height"><div class="t">指定高度</div><div class="d">另一边按比例自适应</div></div>
+    </div>
+    <div class="sub-row hidden" id="scaleValueRow">
+      <label id="scaleValueLabel">目标宽度（px）</label>
+      <input type="number" id="scaleValue" min="1" max="20000" value="1000">
+    </div>
+    <div class="hint" id="scaleHint">AI 放大使用 realesrgan-x4plus-anime 模型（GPU 加速），2/3 倍为模型放大后高质量降采样。</div>
+
+    <div class="section-gap"></div>
+
+    <div class="switch-row">
+      <div class="info">
+        <div class="t">图片锐化（可选）</div>
+        <div class="d">仅对处理后宽度 ≤ 1000 像素的图片生效，超出宽度的图片自动跳过锐化</div>
+      </div>
+      <label class="switch"><input type="checkbox" id="sharpenOn"><span class="track"></span></label>
+    </div>
+    <div class="slider-row hidden" id="sharpenRow">
+      <label>锐化强度</label>
+      <input type="range" id="sharpenStrength" min="0" max="100" value="50">
+      <input type="number" class="val" id="sharpenVal" min="0" max="100" value="50">
+    </div>
+    <div class="hint hidden" id="sharpenHint">数值越大，边缘和细节越清晰；0 表示保持原图。</div>
+
+    <div class="section-gap"></div>
+
+    <div style="font-size:13px;color:var(--slate-600);font-weight:600;margin-bottom:10px;">输出格式</div>
+    <div class="fmt-row" id="fmtRow">
+      <div class="fmt-pill on" data-fmt="webp">WebP</div>
+      <div class="fmt-pill" data-fmt="jpg">JPG</div>
+      <div class="fmt-pill" data-fmt="jpeg">JPEG</div>
+      <div class="fmt-pill" data-fmt="png">PNG</div>
+    </div>
+    <div class="slider-row" id="qualityRow">
+      <label>输出质量</label>
+      <input type="range" id="quality" min="1" max="100" value="80">
+      <input type="number" class="val" id="qualityVal" min="1" max="100" value="80">
+    </div>
+    <div class="hint">WebP / JPG 质量越高体积越大；PNG 为无损格式，质量选项对其无效。</div>
+  </section>
+
+  <!-- ③ 开始处理 -->
+  <section class="card">
+    <div class="card-title"><span class="n">3</span>开始处理</div>
+    <div class="start-area">
+      <button class="btn btn-primary btn-lg start-btn" id="btnStart" disabled>开始批处理</button>
+    </div>
+    <div class="hint" style="text-align:center;margin-top:10px;" id="startHint">请先选择图片</div>
+  </section>
+
+  <!-- 进度/结果 -->
+  <section class="card hidden" id="progressCard">
+    <div class="card-title"><span class="n">⏳</span>处理进度</div>
+    <div class="progress-wrap">
+      <div class="progress-meta"><span id="progressText">准备中…</span><span id="progressPct">0%</span></div>
+      <div class="progress-bar"><div id="progressFill"></div></div>
+    </div>
+    <div class="result-list" id="resultList"></div>
+    <div class="out-path hidden" id="outPath"></div>
+    <div class="done-actions hidden" id="doneActions">
+      <button class="btn btn-primary" id="btnSaveAll">💾 保存全部到下载文件夹</button>
+      <button class="btn btn-primary" id="btnZip">📦 下载全部（ZIP）</button>
+      <button class="btn btn-ghost" id="btnOpenFolder">📂 打开下载文件夹</button>
+      <button class="btn btn-ghost" id="btnNewTask">🔄 开始新任务</button>
+    </div>
+  </section>
+
+  <div class="footer">本地运行 · 图片不上传云端 · 引擎：Real-ESRGAN (realesrgan-x4plus-anime) + Pillow</div>
+</main>
+
+<div class="toast" id="toast"></div>
+<script src="/app.js"></script>
+</body>
+</html>
