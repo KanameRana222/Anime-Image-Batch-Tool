@@ -1,8 +1,8 @@
-# 二次元图片批处理工具箱（Anime Image Batch Tool）
+# Anime风格图片批处理工具箱（Anime Image Batch Tool）
 
 一个本地运行的 Windows 图片批处理工具：在浏览器里完成批量 AI 超分、尺寸缩放、锐化和格式转换。所有图片都在本机处理，不上传云端。
 
-> 本项目是个人工具的开源版本，不是 Real-ESRGAN 官方项目。AI 超分依赖第三方的 Real-ESRGAN ncnn-vulkan 引擎与模型，相关版权和许可证归原作者所有。
+> 本项目是个人工具的开源版本，不是 Real-ESRGAN 官方项目。AI 超分依赖第三方的 Real-ESRGAN ncnn-vulkan 本地引擎与模型，相关版权和许可证归原作者所有。
 
 ## 特性
 
