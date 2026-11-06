@@ -74,9 +74,7 @@ server.py（http.server）
 
 ### 方式一：使用发布包（推荐，免安装）
 
-发布包通常包含 `runtime/`、`RealESRGAN/`、`server.py`、`static/` 和 `start.bat`。解压后直接双击 `start.bat`，浏览器会自动打开。
-
-仓库本身不提交 `runtime/` 和 `RealESRGAN/`：它们体积大、包含二进制和模型，并且有各自的许可证。维护者可以按上面的目录结构打包成 ZIP，作为 GitHub Release 附件发布。
+发布包包含 `runtime/`、`RealESRGAN/`、`server.py`、`static/` 和 `start.bat`。解压后直接双击 `start.bat`，浏览器会自动打开。
 
 ### 方式二：源码运行（需要 Python）
 
@@ -171,7 +169,7 @@ python test_e2e.py
 
 - 仅面向 Windows：`start.bat`、Real-ESRGAN Windows 二进制、注册表读取等；Linux/macOS 需要自行适配。
 - AI 超分依赖 Vulkan GPU 和 Real-ESRGAN ncnn-vulkan，纯 CPU 环境不可用。
-- 默认只带动漫模型 `realesrgan-x4plus-anime`；真人照片建议换用 `realesrgan-x4plus` 等模型。
+- 默认只带动漫模型 `realesrgan-x4plus-anime`；真人照片建议换用 Real-ESRGAN 的 `realesrgan-x4plus` 等模型。
 - 2x/3x 会先做 4 倍推理再降采样，大图会占用较多内存；超大图可能失败。
 - 锐化只对输出宽度 ≤1000px 生效。
 - 不保留 EXIF/ICC 等元数据；CMYK 等特殊色彩模式可能无法直接保存为 WebP。
